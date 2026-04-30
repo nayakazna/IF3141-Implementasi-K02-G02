@@ -6,8 +6,6 @@ Odoo merupakan *Enterprise Resource Planning System* yang mampu melakukan implem
 
 Odoo memberikan opsi *on-premise solution* sehingga developer dapat melakukan implementasi kustom modul pada local environment.
 
-Repository ini diperuntukkan untuk Tugas Besar IF3141 Sistem Informasi. Untuk memulai silakan melakukan fork dan membuat repository private untuk workspace setiap kelompok.
-
 
 ## Pre-requisites
 Odoo diimplementasikan dengan Python environment dan database PostgreSQL. Repository ini sudah membungkus service aplikasi dan database melalui Docker.
@@ -36,6 +34,10 @@ Sebelum memulai, pastikan dependency berikut sudah terpasang:
 
 1. Jalankan service Odoo dan PostgreSQL:
 
+	```bash
+	docker compose up -d db
+	docker compose run --rm web odoo -i base --stop-after-init -d postgres --without-demo=all --load-language=en_US
+	```
 	```bash
 	docker compose up -d
 	```
