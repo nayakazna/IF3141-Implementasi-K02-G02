@@ -19,3 +19,6 @@ __pycache__/
 # IDE / Editor
 .vscode/
 .idea/
+
+# Environment secrets
+.env
