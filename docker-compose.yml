@@ -4,7 +4,9 @@ services:
   web:
     image: odoo:17.0
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
     ports:
       - "8069:8069"
     volumes:
@@ -31,6 +33,12 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
+    healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+          interval: 5s
+          timeout: 5s
+          retries: 10
+
 
   alpine:
     image: alpine:latest
