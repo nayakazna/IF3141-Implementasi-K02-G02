@@ -6,19 +6,19 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
     ports:
       - "8069:8069"
     volumes:
       - ./config:/etc/odoo
       - ./custom_addons:/mnt/extras-addons
       - odoo-web-data:/var/lib/odoo
+    environment:
+      - HOST=${ODOO_DB_HOST}
+      - PORT=${ODOO_DB_PORT}
+      - USER=${ODOO_DB_USER}
+      - PASSWORD=${ODOO_DB_PASSWORD}
     command: >
-      odoo 
-      --db_host=${ODOO_DB_HOST} 
-      --db_port=${ODOO_DB_PORT} 
-      --db_user=${ODOO_DB_USER} 
-      --db_password=${ODOO_DB_PASSWORD}
+      odoo
       --db_name=${ODOO_DB_NAME}
       --admin-passwd=${ODOO_ADMIN_PASSWD}
       -i base
