@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_avs_technical_document_pmo,access.avs.technical.document.pmo,model_avs_technical_document,avs_project.group_avs_pmo,1,1,1,0
+access_avs_technical_document_engineer,access.avs.technical.document.engineer,model_avs_technical_document,avs_project.group_avs_engineer,1,1,1,0
+access_avs_technical_document_sales,access.avs.technical.document.sales,model_avs_technical_document,avs_project.group_avs_sales,1,0,0,0
