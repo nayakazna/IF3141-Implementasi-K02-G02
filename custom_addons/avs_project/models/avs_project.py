@@ -1,20 +1,59 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 class AvsStage(models.Model):
-    _inherit = 'project.task.type'    
-    x_is_closed = fields.Boolean(string="Tahap Selesai?", default=False) # field buat stage yg beres
+    _inherit = 'project.task.type'
+
+    x_is_closed = fields.Boolean(string="Tahap Selesai?", default=False)
+    x_stage_progress = fields.Float(
+        string="Progress Tahap (%)",
+        default=0.0,
+        help="Persentase progres untuk task yang berada di tahap ini (0 - 100).",
+    )
+    x_exclude_from_progress = fields.Boolean(
+        string="Kecualikan dari Progress Proyek",
+        default=False,
+        help="Jika aktif, task pada tahap ini tidak ikut dihitung ke progress proyek.",
+    )
+
+    @api.constrains('x_stage_progress')
+    def _check_stage_progress_range(self):
+        for stage in self:
+            if stage.x_stage_progress < 0.0 or stage.x_stage_progress > 100.0:
+                raise ValidationError("Progress tahap harus berada di rentang 0 sampai 100.")
 
 class AvsProject(models.Model):
     _inherit = 'project.project'
 
     x_overall_progress = fields.Float(string="Total Progress (%)", compute="_compute_overall_progress", store=True)
 
-    @api.depends('task_ids.x_progress_percent')
+    @api.depends(
+        'task_ids.parent_id',
+        'task_ids.x_weight',
+        'task_ids.x_progress_percent',
+        'task_ids.stage_id.x_exclude_from_progress',
+    )
     def _compute_overall_progress(self):
         for project in self:
-            tasks = project.task_ids
+            tasks = project.task_ids.filtered(
+                lambda t: not t.parent_id and not t.stage_id.x_exclude_from_progress
+            )
             if tasks:
-                project.x_overall_progress = sum(tasks.mapped('x_progress_percent')) / len(tasks)
+                weighted_total = 0.0
+                total_weight = 0.0
+                fallback_progress = 0.0
+
+                for task in tasks:
+                    progress = task.x_progress_percent
+                    weight = max(task.x_weight, 0)
+                    fallback_progress += progress
+                    weighted_total += progress * weight
+                    total_weight += weight
+
+                if total_weight > 0:
+                    project.x_overall_progress = weighted_total / total_weight
+                else:
+                    project.x_overall_progress = fallback_progress / len(tasks)
             else:
                 project.x_overall_progress = 0.0
 
@@ -25,17 +64,39 @@ class AvsTask(models.Model):
     x_weight = fields.Integer(string="Bobot Task (Points)", default=1)
     x_is_overloaded = fields.Boolean(string="Overload?", compute="_compute_is_overloaded")
 
-    @api.depends('stage_id.x_is_closed', 'child_ids.stage_id.x_is_closed')
+    @api.constrains('x_weight')
+    def _check_non_negative_weight(self):
+        for task in self:
+            if task.x_weight < 0:
+                raise ValidationError("Bobot task tidak boleh bernilai negatif.")
+
+    @api.depends(
+        'stage_id.x_stage_progress',
+        'child_ids.x_progress_percent',
+        'child_ids.x_weight',
+        'child_ids.stage_id.x_exclude_from_progress',
+    )
     def _compute_task_progress(self):
         for task in self:
-            if task.stage_id.x_is_closed:
-                task.x_progress_percent = 100.0
-            elif task.child_ids:
-                total_sub = len(task.child_ids)
-                done_sub = len(task.child_ids.filtered(lambda s: s.stage_id.x_is_closed))
-                task.x_progress_percent = (done_sub / total_sub) * 100
+            subtasks = task.child_ids.filtered(lambda s: not s.stage_id.x_exclude_from_progress)
+            if subtasks:
+                weighted_total = 0.0
+                total_weight = 0.0
+                fallback_progress = 0.0
+
+                for subtask in subtasks:
+                    progress = subtask.x_progress_percent
+                    weight = max(subtask.x_weight, 0)
+                    fallback_progress += progress
+                    weighted_total += progress * weight
+                    total_weight += weight
+
+                if total_weight > 0:
+                    task.x_progress_percent = weighted_total / total_weight
+                else:
+                    task.x_progress_percent = fallback_progress / len(subtasks)
             else:
-                task.x_progress_percent = 0.0
+                task.x_progress_percent = task.stage_id.x_stage_progress or 0.0
 
     @api.depends('user_ids', 'user_ids.x_current_load', 'user_ids.x_max_capacity')
     def _compute_is_overloaded(self):
