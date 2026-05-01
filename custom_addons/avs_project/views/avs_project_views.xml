@@ -1,0 +1,41 @@
+<odoo>
+    <record id="view_project_project_tree_inherit" model="ir.ui.view">
+        <field name="name">project.project.tree.inherit</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="x_overall_progress" widget="progressbar"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_task_form_inherit" model="ir.ui.view">
+        <field name="name">project.task.form.inherit</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_ids']" position="after">
+                <field name="x_is_overloaded" invisible="1"/> 
+                
+                <field name="x_weight"/>
+                
+                <div class="alert alert-danger" role="alert" 
+                    invisible="not x_is_overloaded">
+                    <strong>Peringatan:</strong> Engineer terpilih sedang Overload!
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="edit_project_task_type_inherit" model="ir.ui.view">
+        <field name="name">project.task.type.form.inherit</field>
+        <field name="model">project.task.type</field>
+        <field name="inherit_id" ref="project.task_type_edit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='fold']" position="after">
+                <field name="x_is_closed"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

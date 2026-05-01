@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_avs_project_pmo,access.avs.project.pmo,project.model_project_project,group_avs_pmo,1,1,1,1
+access_avs_task_pmo,access.avs.task.pmo,project.model_project_task,group_avs_pmo,1,1,1,1
+access_avs_project_engineer,access.avs.project.engineer,project.model_project_project,group_avs_engineer,1,0,0,0
+access_avs_task_engineer,access.avs.task.engineer,project.model_project_task,group_avs_engineer,1,1,1,0
+access_avs_project_sales,access.avs.project.sales,project.model_project_project,group_avs_sales,1,0,0,0
+access_avs_task_sales,access.avs.task.sales,project.model_project_task,group_avs_sales,1,0,0,0
+access_avs_res_users_pmo,access.avs.res.users.pmo,base.model_res_users,group_avs_pmo,1,1,1,1

@@ -1,0 +1,1 @@
+from . import avs_project
