@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_avs_simulator_type_user_read,access.avs.simulator.type.user.read,model_avs_simulator_type,base.group_user,1,0,0,0
+access_avs_simulator_type_sales,access.avs.simulator.type.sales,model_avs_simulator_type,avs_project.group_avs_sales,1,1,1,1

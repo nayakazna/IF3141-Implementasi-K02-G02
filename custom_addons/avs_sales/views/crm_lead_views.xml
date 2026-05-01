@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crm_lead_view_form_inherit_technical_requirements" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.technical.requirements</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='internal_notes']" position="after">
+                <page name="technical_requirements" string="Technical Requirements">
+                    <group>
+                        <field name="x_simulator_type_id"/>
+                        <field name="x_raw_specs" widget="html"/>
+                        <field name="x_technical_notes" widget="html"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
