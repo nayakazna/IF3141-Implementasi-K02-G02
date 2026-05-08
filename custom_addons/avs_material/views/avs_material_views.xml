@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_avs_material_list" model="ir.ui.view">
+        <field name="name">avs.material.list</field>
+        <field name="model">avs.material</field>
+        <field name="arch" type="xml">
+            <tree string="Daftar Material" decoration-danger="is_low_stock == True">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="unit"/>
+                <field name="stock_qty" string="Stok Tersedia"/>
+                <field name="min_stock_qty" string="Stok Minimum"/>
+                <field name="is_low_stock" widget="boolean" string="Stok Menipis?"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_avs_material_form" model="ir.ui.view">
+        <field name="name">avs.material.form</field>
+        <field name="model">avs.material</field>
+        <field name="arch" type="xml">
+            <form string="Input Bahan Baku">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="unit"/>
+                        </group>
+                        <group>
+                            <field name="stock_qty"/>
+                            <field name="min_stock_qty"/>
+                            <field name="is_low_stock" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Deskripsi">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_avs_material" model="ir.actions.act_window">
+        <field name="name">Material</field>
+        <field name="res_model">avs.material</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_avs_material_root"
+              name="Material"
+              sequence="50"/>
+
+    <menuitem id="menu_avs_material_list"
+              name="Daftar Material"
+              parent="menu_avs_material_root"
+              action="action_avs_material"
+              sequence="10"/>
+
+</odoo>
