@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_avs_procurement_list" model="ir.ui.view">
+        <field name="name">avs.procurement.request.list</field>
+        <field name="model">avs.procurement.request</field>
+        <field name="arch" type="xml">
+            <tree string="Request Pengadaan"
+                  decoration-muted="state == 'rejected'"
+                  decoration-info="state == 'approved'"
+                  decoration-success="state == 'received'"
+                  decoration-warning="state == 'submitted'">
+                <field name="name"/>
+                <field name="material_id"/>
+                <field name="project_id"/>
+                <field name="qty_requested"/>
+                <field name="requested_by"/>
+                <field name="request_date"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'submitted'"
+                       decoration-info="state == 'approved'"
+                       decoration-success="state == 'received'"
+                       decoration-danger="state == 'rejected'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_avs_procurement_form" model="ir.ui.view">
+        <field name="name">avs.procurement.request.form</field>
+        <field name="model">avs.procurement.request</field>
+        <field name="arch" type="xml">
+            <form string="Request Pengadaan">
+                <header>
+                    <button name="action_submit" string="Ajukan" type="object"
+                            invisible="state != 'draft'"
+                            class="btn-primary"/>
+                    <button name="action_approve" string="Setujui" type="object"
+                            invisible="state != 'submitted'"
+                            groups="avs_project.group_avs_pmo"
+                            class="btn-primary"/>
+                    <button name="action_receive" string="Terima Barang" type="object"
+                            invisible="state != 'approved'"
+                            groups="avs_project.group_avs_engineer"
+                            class="btn-primary"/>
+                    <button name="action_reject" string="Tolak" type="object"
+                            invisible="state not in ['draft', 'submitted']"
+                            groups="avs_project.group_avs_pmo"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,received"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="material_id" readonly="state != 'draft'"/>
+                            <field name="project_id" readonly="state != 'draft'"/>
+                            <field name="qty_requested" readonly="state != 'draft'"/>
+                            <field name="qty_received"
+                                   invisible="state not in ('approved', 'received')"
+                                   readonly="state == 'received'"/>
+                        </group>
+                        <group>
+                            <field name="requested_by" readonly="1"/>
+                            <field name="request_date" readonly="1"/>
+                            <field name="received_date" readonly="1"
+                                   invisible="state not in ('received',)"/>
+                        </group>
+                    </group>
+                    <group string="Catatan">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_avs_procurement" model="ir.actions.act_window">
+        <field name="name">Request Pengadaan</field>
+        <field name="res_model">avs.procurement.request</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_avs_procurement"
+              name="Request Pengadaan"
+              parent="menu_avs_material_root"
+              action="action_avs_procurement"
+              sequence="20"/>
+
+</odoo>
