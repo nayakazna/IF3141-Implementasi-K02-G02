@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_avs_aftersales_report" model="ir.sequence">
+            <field name="name">Aftersales Report</field>
+            <field name="code">avs.aftersales.report</field>
+            <field name="prefix">AFS/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</odoo>

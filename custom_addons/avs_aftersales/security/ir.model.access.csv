@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_avs_aftersales_report_pmo,access.avs.aftersales.report.pmo,model_avs_aftersales_report,avs_project.group_avs_pmo,1,1,0,0
+access_avs_aftersales_report_engineer,access.avs.aftersales.report.engineer,model_avs_aftersales_report,avs_project.group_avs_engineer,1,1,0,0
+access_avs_aftersales_report_sales,access.avs.aftersales.report.sales,model_avs_aftersales_report,avs_project.group_avs_sales,1,1,1,0
