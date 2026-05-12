@@ -60,6 +60,7 @@ class AvsAftersalesReport(models.Model):
         string="Forward To",
         tracking=True,
     )
+    can_forward = fields.Boolean(compute="_compute_can_forward")
     forwarded_by_id = fields.Many2one(
         comodel_name="res.users",
         string="Forwarded By",
@@ -82,6 +83,18 @@ class AvsAftersalesReport(models.Model):
             record.message_post(body=_("Aftersales report recorded."))
         return records
 
+    @api.depends("state", "forwarded_to_id")
+    def _compute_can_forward(self):
+        is_sales = self.env.user.has_group("avs_project.group_avs_sales")
+        for report in self:
+            report.can_forward = (
+                report.state not in ("done", "cancel")
+                and (
+                    is_sales
+                    or (report.state == "forwarded" and report.forwarded_to_id == self.env.user)
+                )
+            )
+
     def action_record(self):
         for report in self:
             if report.state != "draft":
@@ -91,24 +104,29 @@ class AvsAftersalesReport(models.Model):
 
     def action_forward(self):
         for report in self:
-            if report.state not in ("recorded", "draft"):
-                raise UserError(_("Only draft or recorded reports can be forwarded."))
+            if report.state not in ("draft", "recorded", "forwarded"):
+                raise UserError(_("Only draft, recorded, or forwarded reports can be forwarded."))
             if not report.forwarded_to_id:
                 raise ValidationError(_("Please choose a user to forward the report to."))
-            report.write(
+            is_sales = self.env.user.has_group("avs_project.group_avs_sales")
+            is_assigned_forwarded_user = report.state == "forwarded" and report.forwarded_to_id == self.env.user
+            if not (is_sales or is_assigned_forwarded_user):
+                raise UserError(_("Only Sales or the current forwarded user can forward this report."))
+            report_sudo = report.sudo()
+            report_sudo.write(
                 {
                     "state": "forwarded",
                     "forwarded_by_id": self.env.user.id,
                     "forwarded_date": fields.Datetime.now(),
                 }
             )
-            report.activity_schedule(
+            report_sudo.activity_schedule(
                 "mail.mail_activity_data_todo",
                 user_id=report.forwarded_to_id.id,
                 summary=_("Follow up aftersales report"),
                 note=report.forwarded_note or report.description,
             )
-            report.message_post(
+            report_sudo.message_post(
                 body=_("Report forwarded to %s.") % report.forwarded_to_id.display_name,
                 partner_ids=report.forwarded_to_id.partner_id.ids,
             )
