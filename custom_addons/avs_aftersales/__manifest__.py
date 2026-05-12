@@ -17,6 +17,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "security/avs_aftersales_report_security.xml",
         "data/avs_aftersales_sequence.xml",
         "views/avs_aftersales_report_views.xml",
     ],

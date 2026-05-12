@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="avs_rule_aftersales_report_forwarded_user_can_write" model="ir.rule">
+            <field name="name">Aftersales reports: forwarded user can edit only own records</field>
+            <field name="model_id" ref="model_avs_aftersales_report"/>
+            <field name="groups" eval="[(4, ref('avs_project.group_avs_sales')), (4, ref('avs_project.group_avs_engineer')), (4, ref('avs_project.group_avs_pmo'))]"/>
+            <field name="domain_force">[('forwarded_to_id', '=', user.id)]</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+    </data>
+</odoo>
