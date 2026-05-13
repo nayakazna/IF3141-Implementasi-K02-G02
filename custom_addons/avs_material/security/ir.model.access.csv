@@ -4,3 +4,6 @@ access_avs_material_engineer,access.avs.material.engineer,model_avs_material,avs
 access_avs_material_sales,access.avs.material.sales,model_avs_material,avs_project.group_avs_sales,1,0,0,0
 access_avs_procurement_pmo,access.avs.procurement.pmo,model_avs_procurement_request,avs_project.group_avs_pmo,1,1,1,1
 access_avs_procurement_engineer,access.avs.procurement.engineer,model_avs_procurement_request,avs_project.group_avs_engineer,1,1,1,0
+access_avs_material_requirement_pmo,access.avs.material.requirement.pmo,model_avs_material_requirement,avs_project.group_avs_pmo,1,1,1,1
+access_avs_material_requirement_engineer,access.avs.material.requirement.engineer,model_avs_material_requirement,avs_project.group_avs_engineer,1,1,1,0
+access_avs_material_requirement_sales,access.avs.material.requirement.sales,model_avs_material_requirement,avs_project.group_avs_sales,1,0,0,0

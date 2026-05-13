@@ -64,12 +64,20 @@ class AvsProcurementRequest(models.Model):
             if rec.state != "draft":
                 raise ValidationError("Hanya draft yang bisa diajukan.")
             rec.state = "submitted"
+        return self._notify_action(
+            "Pengajuan Berhasil",
+            "Request pengadaan berhasil diajukan.",
+        )
 
     def action_approve(self):
         for rec in self:
             if rec.state != "submitted":
                 raise ValidationError("Hanya pengajuan yang sudah disubmit yang bisa disetujui.")
             rec.state = "approved"
+        return self._notify_action(
+            "Pengajuan Disetujui",
+            "Request pengadaan berhasil disetujui.",
+        )
 
     def action_receive(self):
         for rec in self:
@@ -80,12 +88,31 @@ class AvsProcurementRequest(models.Model):
             rec.material_id.stock_qty += rec.qty_received
             rec.received_date = fields.Datetime.now()
             rec.state = "received"
+        return self._notify_action(
+            "Barang Diterima",
+            "Penerimaan barang berhasil dicatat.",
+        )
 
     def action_reject(self):
         for rec in self:
             if rec.state not in ("submitted", "draft"):
                 raise ValidationError("Status tidak bisa ditolak.")
             rec.state = "rejected"
+        return self._notify_action(
+            "Pengajuan Ditolak",
+            "Request pengadaan ditolak.",
+        )
+
+    def _notify_action(self, title, message):
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": title,
+                "message": message,
+                "sticky": False,
+            },
+        }
 
     @api.model_create_multi
     def create(self, vals_list):
