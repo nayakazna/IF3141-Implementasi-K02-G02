@@ -5,6 +5,19 @@ from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 
+def _notify_user(env, title, message):
+    user = env.user
+    notify = getattr(user, "notify_info", None)
+    if notify:
+        try:
+            notify(message, title=title, sticky=False)
+        except TypeError:
+            try:
+                notify(message, title)
+            except Exception:
+                pass
+
+
 class AvsTechnicalDocument(models.Model):
     _name = "avs.technical.document"
     _description = "AVS Technical Document"
@@ -73,5 +86,12 @@ class AvsTechnicalDocument(models.Model):
                     limit=1,
                 )
                 vals["version"] = latest.version + 1 if latest else 1
+        records = super().create(vals_list)
+        _notify_user(self.env, "Dokumen Berhasil Diunggah", "Dokumen teknis berhasil diunggah.")
+        return records
 
-        return super().create(vals_list)
+    def write(self, vals):
+        result = super().write(vals)
+        if {"file_data", "file_name", "version"}.intersection(vals):
+            _notify_user(self.env, "Versi Dokumen Diperbarui", "Versi dokumen berhasil diperbarui.")
+        return result
