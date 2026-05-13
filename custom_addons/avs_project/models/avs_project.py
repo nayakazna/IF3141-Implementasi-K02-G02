@@ -1,6 +1,19 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
+
+def _notify_user(env, title, message):
+    user = env.user
+    notify = getattr(user, "notify_info", None)
+    if notify:
+        try:
+            notify(message, title=title, sticky=False)
+        except TypeError:
+            try:
+                notify(message, title)
+            except Exception:
+                pass
+
 class AvsStage(models.Model):
     _inherit = 'project.task.type'
 
@@ -57,6 +70,20 @@ class AvsProject(models.Model):
             else:
                 project.x_overall_progress = 0.0
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        projects = super().create(vals_list)
+        _notify_user(self.env, "Proyek Berhasil Dibuat", "Proyek berhasil dibuat.")
+        return projects
+
+    def write(self, vals):
+        result = super().write(vals)
+        if "active" in vals and not vals.get("active"):
+            _notify_user(self.env, "Status Proyek Diperbarui", "Status proyek berhasil diperbarui.")
+        else:
+            _notify_user(self.env, "Proyek Berhasil Diperbarui", "Perubahan proyek berhasil disimpan.")
+        return result
+
 class AvsTask(models.Model):
     _inherit = 'project.task'
 
@@ -107,6 +134,12 @@ class AvsTask(models.Model):
                     overloaded = True
                     break
             task.x_is_overloaded = overloaded
+
+    def write(self, vals):
+        result = super().write(vals)
+        if vals:
+            _notify_user(self.env, "Tugas Berhasil Diperbarui", "Perubahan tugas berhasil disimpan.")
+        return result
 
 class ResUsers(models.Model):
     _inherit = 'res.users'
