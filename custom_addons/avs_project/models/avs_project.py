@@ -87,7 +87,12 @@ class AvsProject(models.Model):
 class AvsTask(models.Model):
     _inherit = 'project.task'
 
-    x_progress_percent = fields.Float(string="Progress (%)", compute="_compute_task_progress", store=True)
+    x_progress_percent = fields.Float(
+        string="Progress (%)",
+        compute="_compute_task_progress",
+        store=True,
+        recursive=True,
+    )
     x_weight = fields.Integer(string="Bobot Task (Points)", default=1)
     x_is_overloaded = fields.Boolean(string="Overload?", compute="_compute_is_overloaded")
 
