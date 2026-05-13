@@ -98,5 +98,5 @@
         </field>
     </record>
 
-    <menuitem id="menu_avs_aftersales_report" name="Aftersales Reports" parent="project.menu_main_pm" action="action_avs_aftersales_report" sequence="40"/>
+    <menuitem id="menu_avs_aftersales_report" name="Aftersales Reports" parent="avs_project.menu_avs_project_management_root" action="action_avs_aftersales_report" sequence="40"/>
 </odoo>

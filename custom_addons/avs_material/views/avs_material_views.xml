@@ -48,8 +48,56 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="view_avs_material_requirement_tree" model="ir.ui.view">
+        <field name="name">avs.material.requirement.tree</field>
+        <field name="model">avs.material.requirement</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="task_id"/>
+                <field name="project_id"/>
+                <field name="material_id"/>
+                <field name="qty_required"/>
+                <field name="status" widget="badge"/>
+                <field name="procurement_request_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_avs_material_requirement_form" model="ir.ui.view">
+        <field name="name">avs.material.requirement.form</field>
+        <field name="model">avs.material.requirement</field>
+        <field name="arch" type="xml">
+            <form string="Material Requirement">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="task_id"/>
+                            <field name="project_id" readonly="1"/>
+                            <field name="material_id"/>
+                            <field name="qty_required"/>
+                        </group>
+                        <group>
+                            <field name="status" readonly="1"/>
+                            <field name="procurement_request_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Catatan">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_avs_material_requirement" model="ir.actions.act_window">
+        <field name="name">Material Requirements</field>
+        <field name="res_model">avs.material.requirement</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <menuitem id="menu_avs_material_root"
               name="Material"
+              parent="avs_project.menu_avs_project_management_root"
               sequence="50"/>
 
     <menuitem id="menu_avs_material_list"
@@ -57,5 +105,31 @@
               parent="menu_avs_material_root"
               action="action_avs_material"
               sequence="10"/>
+
+    <menuitem id="menu_avs_material_requirement"
+              name="Kebutuhan Material"
+              parent="menu_avs_material_root"
+              action="action_avs_material_requirement"
+              sequence="15"/>
+
+    <record id="view_task_form_inherit_material_requirements" model="ir.ui.view">
+        <field name="name">project.task.form.inherit.material.requirements</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="material_requirements" string="Material Requirements">
+                    <field name="x_material_requirement_ids" context="{'default_task_id': active_id}">
+                        <tree editable="bottom">
+                            <field name="material_id"/>
+                            <field name="qty_required"/>
+                            <field name="status" widget="badge"/>
+                            <field name="procurement_request_id"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
 
 </odoo>

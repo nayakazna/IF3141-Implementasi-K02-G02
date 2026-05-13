@@ -1,4 +1,25 @@
 <odoo>
+    <record id="action_avs_project_management" model="ir.actions.act_window">
+        <field name="name">AVS Project Management</field>
+        <field name="res_model">project.project</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+    <menuitem
+        id="menu_avs_project_management_root"
+        name="AVS Project Management"
+        action="action_avs_project_management"
+        sequence="5"
+    />
+
+    <menuitem
+        id="menu_avs_project_management_projects"
+        name="Projects"
+        parent="menu_avs_project_management_root"
+        action="action_avs_project_management"
+        sequence="10"
+    />
+
     <record id="view_project_project_tree_inherit" model="ir.ui.view">
         <field name="name">project.project.tree.inherit</field>
         <field name="model">project.project</field>

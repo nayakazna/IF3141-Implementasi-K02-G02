@@ -81,7 +81,7 @@
     <menuitem
         id="menu_avs_technical_repository"
         name="Technical Repository"
-        parent="project.menu_main_pm"
+        parent="avs_project.menu_avs_project_management_root"
         action="action_avs_technical_document"
         sequence="30"
         groups="avs_project.group_avs_pmo,avs_project.group_avs_engineer,avs_project.group_avs_sales"
